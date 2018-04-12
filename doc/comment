@@ -1,0 +1,87 @@
+1> make hystrix work and understand the theory
+	-- Semaphore //信号量隔离只是限制了总的并发数，服务使用主线程进行同步调用，即没有线程池。因此，如果只是想限制某个服务的总并发调用量或者调用的服务不涉及远程调用的话，可以使用轻量级的信号量来实现。
+				 //信号量隔离下无论调用哪种命令执行方法，hystrix都不会创建新线程执行run()/construct()，所以调用程序需要多线程的话，必须自己创建多个线程来模拟并发调用execute()
+			//execution.isolation.strategy --> THREAD, SEMAPHORE
+			//execution.isolation.semaphore.maxConcurrentRequests
+			//fallback.isolation.semaphore.maxConcurrentRequests
+	
+	-- ignoreExceptions / raiseHystrixExceptions
+	
+	-- execute	同步 : 发出请求，啥事不敢，占着坑［主动］坐等结果～
+	-- queue 异步 :  发出请求，取结果之前干点别的事情，过一会再去［主动］取结果（结果可能仍未返回，也可能早已返回，不知道，如果未返回，阻塞坐等，如果早已返回，直接拿走结果）～
+	-- observe() + toObservable()  //hot + cold observable 响应式 :  发出请求，该干嘛干嘛去，等结果回来了，会［被动］触发（回调）onCompleted函数～
+	
+	--  缓存： 在同一个HystrixRequestContext中 （即同一个请求线程中）。如果是n个http请求，即n个线程（HystrixRequestContext），那么每个线程中，只有第一次是真实的请求，剩余的为缓存中的值
+			比如: /users/1 --> getUserById(){ callRemoteService(1), callRemoteService(1), callRemoteService(1) }   一个http请求（一个线程，也即一个HystrixRequestContext，相同的请求调用了3次，那么后两次为缓存值）
+				如果再点击一次api /users/1,  新的请求，新的线程，新的HystrixRequestContext， 执行上面相同的过程，第一次真实调用，后两次取缓存的值
+				抛异常无fallback？不缓存，全部停止
+				抛异常有fallback？缓存fallback值
+	-- HystrixCollapserProperties
+	
+	
+2> make hystrix dashboard work
+	-- /hystrix.stream
+	-- HystrixPlugins
+
+弹性可容错
+	断路器
+	实时监测
+	恢复
+
+大多数人在使用Tomcat时，多个HTTP服务会共享一个线程池，假设其中一个HTTP服务访问的数据库响应非常慢，这将造成服务响应时间延迟增加，大多数线程阻塞等待数据响应返回，导致整个Tomcat线程池都被该服务占用，甚至拖垮整个Tomcat.
+因此，如果我们能把不同HTTP服务隔离到不同的线程池，则某个HTTP服务的线程池满了也不会对其他服务造成灾难性故障。这就需要线程隔离或者信号量隔离来实现了。
+使用线程隔离或信号隔离的目的是为不同的服务分配一定的资源，当自己的资源用完，直接返回失败而不是占用别人的资源。
+比如“HTTP服务1”和“HTTP服务2”要分别访问远程的“分布式服务A”和“分布式服务B”，假设它们共享线程池，那么其中一个服务在出现问题时也会影响到另一个服务，因此，我们需要进行访问隔离，可以通过Hystrix的线程池隔离或信号量隔离来实现。
+
+
+Hystrix是一个能够为延迟和故障提供更强大的容错能力的库，通过隔离访问远程系统、服务和第三方库的节点，阻止级联故障，从而使复杂的分布式系统更具弹性。
+线程和信号量隔离，减少不同服务之间资源竞争带来的相互影响
+HystrixCircuitBreaker
+
+
+服务熔断 ： 断开
+服务降级 ： fallback，返回托底数据阻止级联故障
+
+支持四种调用方式：
+	execute	
+	queue
+	observe()  //hot observable
+	toObservable()  //cold observable
+
+线程池隔离的优点:
+	[1]:应用程序会被完全保护起来，即使依赖的一个服务的线程池满了，也不会影响到应用程序的其他部分。
+	[2]:我们给应用程序引入一个新的风险较低的客户端lib的时候，如果发生问题，也是在本lib中，并不会影响到其他内容，因此我们可以大胆的引入新lib库。
+	[3]:当依赖的一个失败的服务恢复正常时，应用程序会立即恢复正常的性能。
+	[4]:如果我们的应用程序一些参数配置错误了，线程池的运行状况将会很快显示出来，比如延迟、超时、拒绝等。同时可以通过动态属性实时执行来处理纠正错误的参数配置。
+	[5]:如果服务的性能有变化，从而需要调整，比如增加或者减少超时时间，更改重试次数，就可以通过线程池指标动态属性修改，而且不会影响到其他调用请求。
+	[6]:除了隔离优势外，hystrix拥有专门的线程池可提供内置的并发功能，使得可以在同步调用之上构建异步的外观模式，这样就可以很方便的做异步编程（Hystrix引入了Rxjava异步框架）。
+	尽管线程池提供了线程隔离，我们的客户端底层代码也必须要有超时设置，不能无限制的阻塞以致线程池一直饱和。
+线程池隔离的缺点:
+	[1]:线程池的主要缺点就是它增加了计算的开销，每个业务请求（被包装成命令）在执行的时候，会涉及到请求排队，调度和上下文切换。不过Netflix公司内部认为线程隔离开销足够小，不会产生重大的成本或性能的影响。
+		The Netflix API processes 10+ billion Hystrix Command executions per day using thread isolation. Each API instance has 40+ thread-pools with 5–20 threads in each (most are set to 10).
+		Netflix API每天使用线程隔离处理10亿次Hystrix Command执行。 每个API实例都有40多个线程池，每个线程池中有5-20个线程（大多数设置为10个）。
+当我们依赖的服务是极低延迟的，比如访问内存缓存，就没有必要使用线程池的方式，那样的话开销得不偿失，而是推荐使用信号量这种方式。
+
+
+
+
+
+
+
+
+
+ThreadPoolKey顾名思义，是HystrixCommand运行所在的线程池，如果该参数不设置则使用GroupKey作为ThreadPoolKey。
+这种情况下往往是同一个业务模块的依赖调用在同一个线程池内，比如使用服务模块[user,order,product等]作为GroupKey。
+如果同一业务内的服务之间还需要隔离的话，就可以设置该参数，比如order的订单和购物车可以通过设置不同的ThreadPoolKey再区分到不同线程池中，这在应对高并发时可以带来较好的效果，因为订单某些查询时比较慢的，如果和购物车放在同一个线程池回影响购物车的速率，同时也可以把下单接口单独隔离。 
+也就是
+	user 
+		thread-1 //所有的user（get list save ...）服务共用一个线程池
+	order
+		thread-2 //订单服务中的购物车单独使用一个线程池
+		thread-3 //订单服务中的其他服务共用一个线程池
+	product
+		thread-4 //所有的product（get list...）服务共用一个线程池
+		
+		
+ignoreExceptions：调用服务时，除了HystrixBadRequestException之外，其他@HystrixCommand修饰的函数抛出的异常均会被Hystrix认为命令执行失败而触发服务降级的处理逻辑（调用fallbackMethod指定的回调函数），所以当需要在命令执行中抛出不触发降级的异常时来使用它，通过这个参数指定，哪些异常抛出时不触发降级（不去调用fallbackMethod），而是将异常向上抛出。
+raiseHystrixExceptions：任何不可忽略的异常都包含在HystrixRuntimeException中；

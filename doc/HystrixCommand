@@ -1,0 +1,91 @@
+===============================
+
+-- 同步执行
+public class UserService {
+    @HystrixCommand
+    public User getUserById(String id) {
+        return userResource.getUserById(id);
+    }
+}
+
+-- 异步执行
+@HystrixCommand
+public Future<User> getUserByIdAsync(final String id) {
+    return new AsyncResult<User>() {
+        @Override
+        public User invoke() {
+            return userResource.getUserById(id);
+        }
+    };
+}}
+
+--响应式执行
+@HystrixCommand
+public Observable<User> getUserById(final String id) {
+    return Observable.create(new Observable.OnSubscribe<User>() {
+            @Override
+            public void call(Subscriber<? super User> observer) {
+                try {
+                    if (!observer.isUnsubscribed()) {
+                        observer.onNext(new User(id, name + id));
+                        observer.onCompleted();
+                    }
+                } catch (Exception e) {
+                    observer.onError(e);
+                }
+            }
+        });
+}
+
+===============================
+
+-- case 1: sync command, sync fallback
+@HystrixCommand(fallbackMethod = "fallback")
+User getUserById(String id) {
+    throw new RuntimeException("getUserById command failed");
+}
+
+@HystrixCommand
+User fallback(String id) {
+    return new User("def", "def");
+}
+
+-- case 2: async command, sync fallback
+@HystrixCommand(fallbackMethod = "fallback")
+Future<User> getUserById(String id) {
+    throw new RuntimeException("getUserById command failed");
+}
+@HystrixCommand
+User fallback(String id) {
+    return new User("def", "def");
+}
+
+-- case 3: async command, async fallback
+@HystrixCommand(fallbackMethod = "fallbackAsync")
+Future<User> getUserById(String id) {
+    throw new RuntimeException("getUserById command failed");
+}
+
+@HystrixCommand
+Future<User> fallbackAsync(String id) {
+    return new AsyncResult<User>() {
+        @Override
+        public User invoke() {
+            return new User("def", "def");
+        }
+    };
+}
+
+-- Unsupported(prohibited)
+@HystrixCommand(fallbackMethod = "fallbackAsync")
+User getUserById(String id) {
+    throw new RuntimeException("getUserById command failed");
+}
+Future<User> fallbackAsync(String id) {
+    return new AsyncResult<User>() {
+        @Override
+        public User invoke() {
+            return new User("def", "def");　// 实际期望获取这个结果，但是被强制执行返回了Future<User>结果，该结果对调用者不可用
+        }
+    };
+}

@@ -31,7 +31,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 			@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"), //表示在一个统计窗口内有50%的请求处理失败，会触发熔断
 			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000") //熔断多长时间后再次尝试请求
 		})
-public class MarketingServiceTwo {
+public class ThreadAnnotationService {
 	
 	@HystrixCommand(
 			fallbackMethod = "fallbackGet",
@@ -48,7 +48,7 @@ public class MarketingServiceTwo {
 				},
 			ignoreExceptions = {InvalidParamException.class}, //抛出类型为InvalidParamException的异常，则此异常将被包装在HystrixBadRequestException中，并重新抛出，而不触发fallback函数 
 			raiseHystrixExceptions = {HystrixException.RUNTIME_EXCEPTION})
-	public MarketingEntiy getById(Long id) throws InvalidParamException, AccessDeniedException{
+	public MarketingEntiy getByIdWithAnnotation(Long id) throws InvalidParamException, AccessDeniedException{
 		if(id < 0) {
 			throw new InvalidParamException(id, "id must be > 0");
 		}else if(id==0) {
@@ -75,4 +75,6 @@ public class MarketingServiceTwo {
 		System.err.println("==== default fallback ==== ");
         return new MarketingEntiy(-1L, "JD");
     }
+	
+	//如果fallback()中又依赖了外部系统调用，那么强烈建议也要加上@HystrixCommand
 }

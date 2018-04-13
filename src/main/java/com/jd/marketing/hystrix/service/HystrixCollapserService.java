@@ -14,27 +14,12 @@ import com.netflix.hystrix.HystrixCollapser.Scope;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-import com.netflix.hystrix.contrib.javanica.cache.annotation.CacheKey;
-import com.netflix.hystrix.contrib.javanica.cache.annotation.CacheRemove;
-import com.netflix.hystrix.contrib.javanica.cache.annotation.CacheResult;
 
 @Service
-public class MarketingServiceFour {
-	
-	@HystrixCommand
-	@CacheResult
-	public MarketingEntiy getById(@CacheKey Long id) {
-		System.err.println("================");
-		return new MarketingEntiy(id, "XYZ");
-		//throw new RuntimeException();
-	}
-	
-	@HystrixCommand
-	@CacheRemove(commandKey = "getApplicationById")
-	public void removeApplicationCache(@CacheKey Long id) {}
+public class HystrixCollapserService {
 	
 	@HystrixCollapser(batchMethod = "find", collapserProperties = {
-			@HystrixProperty(name = "timerDelayInMilliseconds", value = "1000"),
+			@HystrixProperty(name = "timerDelayInMilliseconds", value = "10000"),
 			@HystrixProperty(name = "maxRequestsInBatch", value = "50")
 	}, scope = Scope.GLOBAL)
 	public MarketingEntiy loadById(Long id) {
@@ -47,6 +32,11 @@ public class MarketingServiceFour {
 				new RestTemplate().exchange("http://127.0.0.1:8080/users?ids="+StringUtils.join(ids, ","),
 		                    HttpMethod.GET, null, new ParameterizedTypeReference<List<MarketingEntiy>>() {
 		            });
-		return response.getBody();
+		List<MarketingEntiy> xx = response.getBody();
+		System.err.println("---- size ---- " + xx.size());
+		for(MarketingEntiy x:xx) {
+			System.err.println(x.getId() + " ===> " + x.getName());
+		}
+		return xx;
 	}
 }

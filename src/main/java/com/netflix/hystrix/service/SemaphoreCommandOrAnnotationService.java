@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.service;
+package com.netflix.hystrix.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +8,12 @@ import java.util.concurrent.Future;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
-import com.jd.marketing.hystrix.service.command.MarketingServiceThreeGetByIdObservableCommand;
 import com.netflix.hystrix.HystrixCommand.Setter;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.hystrix.entity.MarketingEntiy;
+import com.netflix.hystrix.service.command.MarketingServiceThreeGetByIdObservableCommand;
 
 @Service
 public class SemaphoreCommandOrAnnotationService {

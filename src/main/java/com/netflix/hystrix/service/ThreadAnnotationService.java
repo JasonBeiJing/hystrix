@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.service;
+package com.netflix.hystrix.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,13 +6,13 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
-import com.jd.marketing.hystrix.entity.exception.AccessDeniedException;
-import com.jd.marketing.hystrix.entity.exception.InvalidParamException;
 import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixException;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.hystrix.entity.MarketingEntiy;
+import com.netflix.hystrix.entity.exception.AccessDeniedException;
+import com.netflix.hystrix.entity.exception.InvalidParamException;
 
 @Service
 @DefaultProperties(

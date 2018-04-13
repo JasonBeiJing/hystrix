@@ -1,15 +1,15 @@
-package com.jd.marketing.hystrix.service.command;
+package com.netflix.hystrix.service.command;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
+import com.netflix.hystrix.entity.MarketingEntiy;
 
 public class MarketingServiceThreeGetByIdObservableCommand extends HystrixCommand<MarketingEntiy> {
 	private final Long id;

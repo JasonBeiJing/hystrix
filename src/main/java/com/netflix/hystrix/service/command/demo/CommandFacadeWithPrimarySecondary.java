@@ -1,3 +1,4 @@
+package com.netflix.hystrix.service.command.demo;
 //package com.jd.marketing.hystrix.service.command.demo;
 //
 //import static org.junit.Assert.assertEquals;

@@ -1,12 +1,12 @@
-package com.jd.marketing.hystrix.service;
+package com.netflix.hystrix.service;
 
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Service;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
-import com.jd.marketing.hystrix.service.command.MarketingServiceOneGetByIdCommand;
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.entity.MarketingEntiy;
+import com.netflix.hystrix.service.command.MarketingServiceOneGetByIdCommand;
 
 
 @Service

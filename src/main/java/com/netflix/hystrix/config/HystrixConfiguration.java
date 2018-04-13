@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.config;
+package com.netflix.hystrix.config;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;

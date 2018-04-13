@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.controller;
+package com.netflix.hystrix.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
-import com.jd.marketing.hystrix.service.HystrixCacheService;
-import com.jd.marketing.hystrix.service.HystrixCollapserService;
-import com.jd.marketing.hystrix.service.SemaphoreCommandOrAnnotationService;
-import com.jd.marketing.hystrix.service.ThreadAnnotationService;
-import com.jd.marketing.hystrix.service.ThreadCommandService;
+import com.netflix.hystrix.entity.MarketingEntiy;
+import com.netflix.hystrix.service.HystrixCacheService;
+import com.netflix.hystrix.service.HystrixCollapserService;
+import com.netflix.hystrix.service.SemaphoreCommandOrAnnotationService;
+import com.netflix.hystrix.service.ThreadAnnotationService;
+import com.netflix.hystrix.service.ThreadCommandService;
 
 @RestController
 @RequestMapping("/hystrix")

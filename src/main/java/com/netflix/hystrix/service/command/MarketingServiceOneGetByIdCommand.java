@@ -1,17 +1,17 @@
-package com.jd.marketing.hystrix.service.command;
+package com.netflix.hystrix.service.command;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
+import com.netflix.hystrix.entity.MarketingEntiy;
 
 public class MarketingServiceOneGetByIdCommand extends HystrixCommand<MarketingEntiy> {
 

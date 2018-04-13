@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.filter;
+package com.netflix.hystrix.filter;
 
 import java.io.IOException;
 

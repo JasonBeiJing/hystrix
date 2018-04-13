@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.entity.exception;
+package com.netflix.hystrix.entity.exception;
 
 public class AccessDeniedException extends Exception {
 

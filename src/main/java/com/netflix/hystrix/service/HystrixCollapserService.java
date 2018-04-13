@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.service;
+package com.netflix.hystrix.service;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.jd.marketing.hystrix.entity.MarketingEntiy;
 import com.netflix.hystrix.HystrixCollapser.Scope;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.hystrix.entity.MarketingEntiy;
 
 @Service
 public class HystrixCollapserService {

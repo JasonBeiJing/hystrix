@@ -1,4 +1,4 @@
-package com.jd.marketing.hystrix.entity;
+package com.netflix.hystrix.entity;
 
 import java.io.Serializable;
 

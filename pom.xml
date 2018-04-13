@@ -13,7 +13,9 @@
 	</parent>
 
 	<properties>
+		<java.version>1.8</java.version>
 		<netflix.hystrix>1.5.12</netflix.hystrix>
+		<commons.lang3>3.7</commons.lang3>
 	</properties>
 
 	<dependencies>
@@ -41,6 +43,11 @@
 			<groupId>com.netflix.hystrix</groupId>
 			<artifactId>hystrix-metrics-event-stream</artifactId>
 			<version>${netflix.hystrix}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>${commons.lang3}</version>
 		</dependency>
 	</dependencies>
 

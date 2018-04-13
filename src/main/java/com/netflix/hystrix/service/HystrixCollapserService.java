@@ -18,6 +18,7 @@ import com.netflix.hystrix.entity.MarketingEntiy;
 @Service
 public class HystrixCollapserService {
 	
+	//将一段时间内的多次请求合并为一次请求，缺点是增加平均延迟	
 	@HystrixCollapser(batchMethod = "find", collapserProperties = {
 			@HystrixProperty(name = "timerDelayInMilliseconds", value = "10000"),
 			@HystrixProperty(name = "maxRequestsInBatch", value = "50")
@@ -28,10 +29,7 @@ public class HystrixCollapserService {
 	
 	@HystrixCommand
 	public List<MarketingEntiy> find(List<Long> ids){
-		ResponseEntity<List<MarketingEntiy>> response =
-				new RestTemplate().exchange("http://127.0.0.1:8080/users?ids="+StringUtils.join(ids, ","),
-		                    HttpMethod.GET, null, new ParameterizedTypeReference<List<MarketingEntiy>>() {
-		            });
+		ResponseEntity<List<MarketingEntiy>> response = new RestTemplate().exchange("http://127.0.0.1:8080/users?ids="+StringUtils.join(ids, ","), HttpMethod.GET, null, new ParameterizedTypeReference<List<MarketingEntiy>>() {});
 		List<MarketingEntiy> xx = response.getBody();
 		System.err.println("---- size ---- " + StringUtils.join(ids, ","));
 		for(MarketingEntiy x:xx) {

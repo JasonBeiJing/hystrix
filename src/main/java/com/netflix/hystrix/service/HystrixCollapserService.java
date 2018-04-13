@@ -22,7 +22,7 @@ public class HystrixCollapserService {
 			@HystrixProperty(name = "timerDelayInMilliseconds", value = "10000"),
 			@HystrixProperty(name = "maxRequestsInBatch", value = "50")
 	}, scope = Scope.GLOBAL)
-	public MarketingEntiy loadById(Long id) {
+	public MarketingEntiy getByIdWithAnnotation(Long id) {
 		return null;
 	}
 	
@@ -33,7 +33,7 @@ public class HystrixCollapserService {
 		                    HttpMethod.GET, null, new ParameterizedTypeReference<List<MarketingEntiy>>() {
 		            });
 		List<MarketingEntiy> xx = response.getBody();
-		System.err.println("---- size ---- " + xx.size());
+		System.err.println("---- size ---- " + StringUtils.join(ids, ","));
 		for(MarketingEntiy x:xx) {
 			System.err.println(x.getId() + " ===> " + x.getName());
 		}

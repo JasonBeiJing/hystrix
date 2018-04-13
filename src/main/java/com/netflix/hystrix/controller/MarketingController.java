@@ -74,6 +74,9 @@ public class MarketingController {
 	
 	@GetMapping("/collapser")
 	public void chongqing(@RequestParam Long id) {
-		hystrixCollapserService.loadById(id);
+		long start = System.currentTimeMillis();
+		hystrixCollapserService.getByIdWithAnnotation(id);
+		long end = System.currentTimeMillis();
+		System.out.println(id + " -- took --> " + (end - start));
 	}
 }

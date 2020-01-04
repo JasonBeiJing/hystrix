@@ -46,7 +46,8 @@ public class ThreadAnnotationService {
 					@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "10"), 
 					@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "30000")
 				},
-			ignoreExceptions = {InvalidParamException.class}, //抛出类型为InvalidParamException的异常，则此异常将被包装在HystrixBadRequestException中，并重新抛出，而不触发fallback函数 
+			// HystrixBadRequestException异常会被抛出，而不触发降级
+			ignoreExceptions = {InvalidParamException.class}, //抛出类型为InvalidParamException的异常时，则将此异常包装在HystrixBadRequestException中，并重新抛出，也不触发fallback函数 
 			raiseHystrixExceptions = {HystrixException.RUNTIME_EXCEPTION})
 	public MarketingEntiy getByIdWithAnnotation(Long id) throws InvalidParamException, AccessDeniedException{
 		if(id < 0) {

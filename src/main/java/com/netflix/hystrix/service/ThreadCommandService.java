@@ -8,6 +8,8 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.entity.MarketingEntiy;
 import com.netflix.hystrix.service.command.MarketingServiceOneGetByIdCommand;
 
+import rx.Observable;
+import rx.Observer;
 
 @Service
 public class ThreadCommandService {
@@ -17,7 +19,7 @@ public class ThreadCommandService {
 		/**
 		 * 同步调用
 		 */
-		return command.execute();
+		// return command.execute();
 		
 		/**
 		 * 异步调用,前提是采用了线程隔离（THREAD），而不是信号隔离（SEMAPHORE）。如果为SEMAPHORE，那么还是当前主线程，阻塞，同步调用
@@ -29,26 +31,26 @@ public class ThreadCommandService {
 		/**
 		 * 在调用的时候就开始执行对应的指令, mode = EAGER
 		 */
-//		Observable<MarketingEntiy> hotObservable = command.observe();
-//		hotObservable.subscribe(new Observer<MarketingEntiy>() {
-//			@Override
-//			public void onCompleted() {
-//				System.err.println("====HOT====");
-//			}
-//			
-//			@Override
-//			public void onError(Throwable e) {
-//				System.err.println("*********HOT*********");
-//				e.printStackTrace();
-//			}
-//			
-//			@Override
-//			public void onNext(MarketingEntiy t) {
-//				System.out.println("--HOT--->" + t.getName());
-//			}
-//			
-//		});
-//		return null;
+		Observable<MarketingEntiy> hotObservable = command.observe();
+		hotObservable.subscribe(new Observer<MarketingEntiy>() {
+			@Override
+			public void onCompleted() {
+				System.err.println("====HOT====");
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				System.err.println("*********HOT*********");
+				e.printStackTrace();
+			}
+
+			@Override
+			public void onNext(MarketingEntiy t) {
+				System.out.println("--HOT--->" + t.getName());
+			}
+
+		});
+		return null;
 		
 		/**
 		 * observe()方法的lazy版本，当我们去subscribe的时候，对应的指令才会被执行并产生结果,  mode = LAZY

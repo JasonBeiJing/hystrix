@@ -16,9 +16,7 @@
 				如果再点击一次api /users/1,  新的请求，新的线程，新的HystrixRequestContext， 执行上面相同的过程，第一次真实调用，后两次取缓存的值
 				抛异常无fallback？不缓存，全部停止
 				抛异常有fallback？缓存fallback值
-	-- HystrixCollapserProperties
-	
-	
+	-- HystrixCollapserProperties	
 2> make hystrix dashboard work
 	-- /hystrix.stream
 	-- HystrixPlugins
@@ -47,21 +45,6 @@ HystrixCircuitBreaker
 	queue
 	observe()  //hot observable
 	toObservable()  //cold observable
-
-线程池隔离的优点:
-	[1]:应用程序会被完全保护起来，即使依赖的一个服务的线程池满了，也不会影响到应用程序的其他部分。
-	[2]:我们给应用程序引入一个新的风险较低的客户端lib的时候，如果发生问题，也是在本lib中，并不会影响到其他内容，因此我们可以大胆的引入新lib库。
-	[3]:当依赖的一个失败的服务恢复正常时，应用程序会立即恢复正常的性能。
-	[4]:如果我们的应用程序一些参数配置错误了，线程池的运行状况将会很快显示出来，比如延迟、超时、拒绝等。同时可以通过动态属性实时执行来处理纠正错误的参数配置。
-	[5]:如果服务的性能有变化，从而需要调整，比如增加或者减少超时时间，更改重试次数，就可以通过线程池指标动态属性修改，而且不会影响到其他调用请求。
-	[6]:除了隔离优势外，hystrix拥有专门的线程池可提供内置的并发功能，使得可以在同步调用之上构建异步的外观模式，这样就可以很方便的做异步编程（Hystrix引入了Rxjava异步框架）。
-	尽管线程池提供了线程隔离，我们的客户端底层代码也必须要有超时设置，不能无限制的阻塞以致线程池一直饱和。
-线程池隔离的缺点:
-	[1]:线程池的主要缺点就是它增加了计算的开销，每个业务请求（被包装成命令）在执行的时候，会涉及到请求排队，调度和上下文切换。不过Netflix公司内部认为线程隔离开销足够小，不会产生重大的成本或性能的影响。
-		The Netflix API processes 10+ billion Hystrix Command executions per day using thread isolation. Each API instance has 40+ thread-pools with 5–20 threads in each (most are set to 10).
-		Netflix API每天使用线程隔离处理10亿次Hystrix Command执行。 每个API实例都有40多个线程池，每个线程池中有5-20个线程（大多数设置为10个）。
-当我们依赖的服务是极低延迟的，比如访问内存缓存，就没有必要使用线程池的方式，那样的话开销得不偿失，而是推荐使用信号量这种方式。
-
 
 ThreadPoolKey顾名思义，是HystrixCommand运行所在的线程池，如果该参数不设置则使用GroupKey作为ThreadPoolKey。
 这种情况下往往是同一个业务模块的依赖调用在同一个线程池内，比如使用服务模块[user,order,product等]作为GroupKey。

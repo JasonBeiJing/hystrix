@@ -34,11 +34,11 @@ import com.netflix.hystrix.entity.exception.InvalidParamException;
 public class ThreadAnnotationService {
 	
 	@HystrixCommand(
-			fallbackMethod = "fallbackGet",
+			fallbackMethod = "fallbackGet", // 覆盖默认的defaultFallback = "fallback"
 			//groupKey = "", //default => the runtime class name of annotated method
 			//commandKey = "", //default => the name of annotated method
 			//threadPoolKey = "", //HystrixCommand运行所在的线程池，如果该参数不设置则使用GroupKey作为ThreadPoolKey
-			commandProperties = {
+			commandProperties = { // 覆盖默认的commandProperties = {...}
 					@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
 					@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "60000"),
 					@HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10"),
@@ -62,7 +62,7 @@ public class ThreadAnnotationService {
 	}
 	
 	/**
-	 * 
+	 * 建议：降级的方法如果涉及到远程调用，也加上熔断降价措施 - @HystrixCommand
 	 * @param id mandatory
 	 * @param e optional
 	 * @return

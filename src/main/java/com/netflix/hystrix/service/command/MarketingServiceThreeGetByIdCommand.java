@@ -11,10 +11,10 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
 import com.netflix.hystrix.entity.MarketingEntiy;
 
-public class MarketingServiceThreeGetByIdObservableCommand extends HystrixCommand<MarketingEntiy> {
+public class MarketingServiceThreeGetByIdCommand extends HystrixCommand<MarketingEntiy> {
 	private final Long id;
 	
-	public MarketingServiceThreeGetByIdObservableCommand(Setter setter, Long id) {
+	public MarketingServiceThreeGetByIdCommand(Setter setter, Long id) {
 		super(setter.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 				.withExecutionIsolationStrategy(ExecutionIsolationStrategy.SEMAPHORE)
 				.withExecutionIsolationSemaphoreMaxConcurrentRequests(10)

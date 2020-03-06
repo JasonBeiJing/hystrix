@@ -13,13 +13,13 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.netflix.hystrix.entity.MarketingEntiy;
-import com.netflix.hystrix.service.command.MarketingServiceThreeGetByIdObservableCommand;
+import com.netflix.hystrix.service.command.MarketingServiceThreeGetByIdCommand;
 
 @Service
 public class SemaphoreCommandOrAnnotationService {
 
 	public MarketingEntiy getByIdWithCommand(Long id) throws InterruptedException, ExecutionException {
-		com.netflix.hystrix.HystrixCommand<MarketingEntiy> command = new MarketingServiceThreeGetByIdObservableCommand(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(this.getClass().getSimpleName())), id);
+		com.netflix.hystrix.HystrixCommand<MarketingEntiy> command = new MarketingServiceThreeGetByIdCommand(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(this.getClass().getSimpleName())), id);
 		System.err.println("X=====>" + System.currentTimeMillis());
 		Future<MarketingEntiy> f = command.queue();
 		System.out.println("Y=====>" + System.currentTimeMillis());

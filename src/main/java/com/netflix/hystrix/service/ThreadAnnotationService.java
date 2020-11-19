@@ -25,7 +25,7 @@ import com.netflix.hystrix.entity.exception.InvalidParamException;
 			@HystrixProperty(name = "queueSizeRejectionThreshold", value = "6") //即使没有达到maxQueueSize，如果达到queueSizeRejectionThreshold该值后，请求也会被拒绝。因为maxQueueSize不能被动态修改，这个参数将允许我们动态设置该值。if maxQueueSize == -1，该字段将不起作用
 		}, 
 		commandProperties = {
-			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"), //每个请求超时时间
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"), //每个请求超时时间，注意如果请求量大，如进了队列，那么其起始时间是从进队列那一刻开始计算的
 			@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"), //设置统计滚动窗口的长度,用于监控和熔断器, 10s
 			@HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10"), // 必须能被metrics.rollingStats.timeInMilliseconds整除, 10s / 10 
 			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"), //在一个时间段内，请求达到requestVolumeThreshold的值，才会进行熔断与否的判断

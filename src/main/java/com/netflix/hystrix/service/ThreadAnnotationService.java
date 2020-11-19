@@ -19,9 +19,10 @@ import com.netflix.hystrix.entity.exception.InvalidParamException;
 		defaultFallback = "fallback",
 		threadPoolProperties = {
 			@HystrixProperty(name = "coreSize", value = "10"), 
+			@HystrixProperty(name = "allowMaximumSizeToDivergeFromCoreSize", value = "true"), // 只有设置了该变量，maximumSize才会起作用
 			@HystrixProperty(name = "maximumSize", value = "10"),
-			@HystrixProperty(name = "maxQueueSize", value = "-1"), //default=-1, turns it off and makes us use SynchronousQueue
-			@HystrixProperty(name = "queueSizeRejectionThreshold", value = "5") //即使没有达到maxQueueSize，如果达到queueSizeRejectionThreshold该值后，请求也会被拒绝。因为maxQueueSize不能被动态修改，这个参数将允许我们动态设置该值。if maxQueueSize == -1，该字段将不起作用
+			@HystrixProperty(name = "maxQueueSize", value = "8"), //default=-1, 即使用SynchronousQueue队列，每次只能一个任务进队列；如果大于1则使用LinkedBlockingQueue
+			@HystrixProperty(name = "queueSizeRejectionThreshold", value = "6") //即使没有达到maxQueueSize，如果达到queueSizeRejectionThreshold该值后，请求也会被拒绝。因为maxQueueSize不能被动态修改，这个参数将允许我们动态设置该值。if maxQueueSize == -1，该字段将不起作用
 		}, 
 		commandProperties = {
 			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"), //每个请求超时时间
